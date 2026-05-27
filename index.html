@@ -5,688 +5,1180 @@
 <link rel="icon" href="figures/icon.png" type="image/png">
 
 <head>
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="Personal webpage">
   <meta name="author" content="Francesco Mattiotti">
-
   <title>Francesco Mattiotti</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.css" rel="stylesheet">
-
-  <!-- Custom fonts for this template -->
+  <!-- Font Awesome -->
   <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet"
-    type="text/css">
-
-  <!-- Custom styles for this template -->
+  <!-- Custom fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+  <!-- Custom styles -->
   <link href="css/landing-page.css" rel="stylesheet">
 
-  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-137967695-1"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag() {dataLayer.push(arguments);}
+    function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'UA-137967695-1');
   </script>
 
+  <!-- ==================== TRANSLATIONS & SLIDESHOW LOGIC ==================== -->
+  <style>
+    /* Slideshow Styles */
+    .slideshow-container {
+      max-width: 800px;
+      margin: 20px auto;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .slideshow-slides {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      height: 400px;
+    }
+    .slideshow-slide {
+      min-width: 100%;
+      position: relative;
+    }
+    .slideshow-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: white;
+    }
+    .slideshow-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-size: 14px;
+      line-height: 1.4;
+      font-weight: normal;
+    }
+    .slideshow-caption a {
+      color: #4da6ff;
+      text-decoration: none;
+    }
+    .slideshow-caption a:hover {
+      text-decoration: underline;
+    }
+    .download-btn {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      margin-left: 10px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      vertical-align: middle;
+      font-weight: normal;
+    }
+    .download-btn i {
+      margin-right: 5px;
+    }
+    .download-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .slideshow-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 20px;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .slideshow-arrow:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .slideshow-arrow.prev {
+      left: 10px;
+    }
+    .slideshow-arrow.next {
+      right: 10px;
+    }
+    .slideshow-play-pause {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      padding: 8px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 16px;
+      z-index: 10;
+    }
+    .slideshow-play-pause:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .reference-line {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    /* Ensure no bold text in captions */
+    .slideshow-caption {
+      font-weight: normal;
+    }
+    .slideshow-caption strong {
+      font-weight: bold;
+    }
+  </style>
+
+  <script>
+    // ===== TRANSLATIONS =====
+    const translations = {
+      en: {
+        // --- Navigation ---
+        "nav-about": "About Me",
+        "nav-research": "Research",
+        "nav-publications": "Publications",
+        "nav-contact": "Contact",
+
+        // --- Header ---
+        "header-subtitle": "Post-Doc in Physics",
+
+        // --- About Me ---
+        "about-title": "About Me",
+        "about-paragraph1": "I am a post-doc in the <a target='_blank' href='https://www.uni-saarland.de/lehrstuhl/morigi.html'>Theoretical Quantum Physics</a> group at the <a target='_blank' href='https://www.uni-saarland.de/en/home.html'>University of Saarland</a>.",
+        "about-paragraph2": "Before, I have been a post-doc in the <a target='_blank' href='http://qmtheory.fr'>Quantum Matter Theory</a> group at the <a target='_blank' href='https://www.cesq.eu'>Centre Européen de Sciences Quantiques (CESQ)</a> - <a target='_blank' href='http://isis.unistra.fr'>Institut de Science et d'Ingénierie Supramoléculaires (ISIS)</a> of the <a target='_blank' href='http://unistra.fr'>University of Strasbourg</a>.",
+        "about-paragraph3": "I obtained my double Ph.D. degree in Physics in the <a target='_blank' href='http://scuoledidottorato.unicatt.it/phdschools/science-home'>International Doctoral Program in Science</a> jointly offered by <a target='_blank' href='http://dipartimenti.unicatt.it/dmf'>Università Cattolica del Sacro Cuore</a> and <a target='_blank' href='https://science.nd.edu'>University of Notre Dame</a>. During my Ph.D. I worked between the <a href='https://centridiricerca.unicatt.it/ilamp-interdisciplinary-laboratories-for-advanced-materials-physics-i-lamp-quantum-biology'>Quantum Biology group</a>, under the supervision of Prof. <a href='https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html'>G. Luca Celardo</a> and Prof. <a href='https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo'>Fausto Borgonovi</a> (UCSC), and the <a href='http://sites.nd.edu/condensed-matter-theory/'>Condensed Matter group</a>, under the supervision of Prof. <a href='https://physics.nd.edu/people/faculty/boldizs-aacute-r-jank-oacute-o/'>Boldizsár Jankó</a> (UND).",
+        "about-paragraph4": "I received my Master's degree in Physics from <a target='_blank' href='http://dipartimenti.unicatt.it/dmf'>Università Cattolica del Sacro Cuore</a> and I wrote my thesis under the supervision of Prof. <a href='https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html'>G. Luca Celardo</a> and Prof. <a href='https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo'>Fausto Borgonovi</a>.",
+
+        // --- Short CV ---
+        "cv-education-title": "Education",
+        "cv-employment-title": "Employments",
+        "cv-download": "Download CV (english)",
+        "cv-download-it": "Download CV (italian)",
+
+        // --- Education ---
+        "education-phd": "Ph.D.; Jan 2017 - Feb 2021, Physics, <a href='http://scuoledidottorato.unicatt.it/phdschools/science-home'>UCSC Brescia</a> & <a target='_blank' href='https://science.nd.edu/'>University of Notre Dame</a>",
+        "education-msc": "M.Sc.; Oct 2013 - Feb 2016, Physics, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+        "education-bsc": "B.Sc.; Oct 2010 - Sep 2013, Physics, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+
+        // --- Employment ---
+        "employment-postdoc-uds": "Post-doc; Mar 2025 - now, <a href='https://www.uni-saarland.de/en/home.html'>UdS</a>",
+        "employment-postdoc-unistra": "Post-doc; Apr 2021 - Mar 2025, <a href='http://unistra.fr'>Unistra</a>",
+        "employment-ta": "Teaching Assistant; Nov 2017 - Dec 2017, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+        "employment-ra": "Research Assistant; Apr 2016 - Dec 2016, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+
+        // --- Research Interests ---
+        "research-title": "Research Interests",
+        "research-description": "I am interested in quantum systems strongly coupled to optical cavities, the interplay of cooperativity with disorder and noise and their implications on quantum transport, also in the context of many body physics.",
+        "research-current-title": "Current research interests",
+        "research-past-title": "Past research interests",
+        "research-current-item1": "Quantum Optics",
+        "research-current-item2": "Cavity QED",
+        "research-current-item3": "Many-body Physics",
+        "research-current-item4": "Cooperativity",
+        "research-current-item5": "Quantum Transport",
+        "research-past-item1": "Validity of non-Hermitian Hamiltonian approach to the dynamics of open quantum systems",
+        "research-past-item2": "Quantum chaos and thermalization in closed systems",
+        "research-past-item3": "Common theoretical framework for different cooperative effects",
+        "research-past-item4": "Superfluorescence in cesium lead halide perovskite nanocrystal superlattices",
+        "research-past-item5": "Interplay of superradiance, coherence and temperature",
+        "research-past-item6": "Superradiance and lasing",
+
+        // --- Publications ---
+        "publications-title": "Publications",
+        "publications-download": "Download",
+
+        // --- Alt Texts (for images) ---
+        "alt-2026-1": "Time complexity of a monitored quantum search with resetting",
+        "alt-2025-1": "Scale-invariant phase transition of disordered bosons in one dimension",
+        "alt-2025-2": "Disorder in Cavity-modified Transport and Chemistry",
+        "alt-2025-3": "Relation between structure and functionality in photosynthetic antenna complex of green sulfur bacteria: efficiency under natural sunlight pumping",
+        "alt-2024-1": "Extraordinary electrical conductance through amorphous non-conducting polymers under vibrational strong coupling",
+        "alt-2024-2": "Multifractality in the interacting disordered Tavis-Cummings model",
+        "alt-2024-3": "Large scale simulations of photosynthetic antenna systems: interplay of cooperativity and disorder",
+        "alt-2024-4": "Universal stability of coherently diffusive one-dimensional systems with respect to decoherence",
+        "alt-2024-5": "Localization of light in three dimensions: a mobility edge in the imaginary axis in non-Hermitian Hamiltonians",
+        "alt-2023-1": "Anomalous diffusion in the Long-Range Haken-Strobl-Reineker model",
+        "alt-2023-2": "Engineering random spin models with atoms in a high-finesse cavity",
+        "alt-2023-3": "Enhanced robustness and dimensional crossover of superradiance in cuboidal nanocrystal superlattices",
+        "alt-2022-1": "Efficient light harvesting and photon sensing via engineered cooperative effects",
+        "alt-2021-1": "Bio-inspired natural sunlight-pumped lasers",
+        "alt-2021-2": "Disorder-Enhanced and Disorder-Independent Transport with long-range hopping: application to molecular chains in optical cavities",
+        "alt-2020-1": "Thermal decoherence of superradiance in lead halide perovskite nanocrystal superlattices",
+        "alt-2019-1": "Real and imaginary energy gaps: a comparison between single excitation superradiance and superconductivity",
+        "alt-2019-2": "Macroscopic coherence as an emergent property in molecular nanotubes",
+        "alt-2017-1": "Temperature of a single chaotic eigenstate",
+        "alt-2015-1": "Non-Hermitian Hamiltonian approach to quantum transport in disordered networks with sinks",
+        "alt-2014-1": "Superradiance, disorder, and the non-hermitian hamiltonian in open quantum systems",
+
+        // --- Contact ---
+        "contact-title": "Contact",
+        "contact-address": "Address:",
+        "contact-room": "Room:",
+        "contact-phone": "Phone:",
+        "contact-email": "E-mail:",
+
+        // --- Get in Touch ---
+        "get-in-touch-title": "Get in touch",
+        "get-in-touch-work": "Work",
+        "get-in-touch-personal": "Personal",
+        "get-in-touch-skype": "Skype",
+
+        // --- Footer ---
+        "footer-home": "Home",
+        "footer-about": "About Me",
+        "footer-research": "Research",
+        "footer-publications": "Publications",
+        "footer-contact": "Contact",
+        "footer-copyright": "Thanks to <a href='https://github.com/MasterToninus/MasterToninus.github.io'>Antonio M. Miti</a> for the custom theme.<br>Thanks to <a href='https://github.com/BlackrockDigital/startbootstrap-landing-page'>BlackrockDigital</a> for the original theme.<br>Title background, contact and banner photos &copy; 2017-2019 Francesco Mattiotti. Portrait photo &copy; 2023 Swayangdipta Bera. All rights reserved."
+      },
+
+      es: {
+        // --- Navigation ---
+        "nav-about": "Sobre mi",
+        "nav-research": "Investigación",
+        "nav-publications": "Publicaciones",
+        "nav-contact": "Contactos",
+
+        // --- Header ---
+        "header-subtitle": "Post-Doc en Física",
+
+        // --- About Me ---
+        "about-title": "Sobre mi",
+        "about-paragraph1": "Estoy trabajando como post-doc en el grupo de <a target='_blank' href='https://www.uni-saarland.de/lehrstuhl/morigi.html'>Física Cuántica Teórica</a> en la <a target='_blank' href='https://www.uni-saarland.de/en/home.html'>Universidad del Saarland</a>.",
+        "about-paragraph2": "Antes, trabajé como post-doc en el grupo de <a target='_blank' href='http://qmtheory.fr'>Teoría Cuántica de la Materia</a> en el <a target='_blank' href='https://www.cesq.eu'>Centro Europeo de Ciencias Cuánticas (CESQ)</a> - <a target='_blank' href='http://isis.unistra.fr'>Instituto de Ciencia e Ingeniería Supramoleculares (ISIS)</a> de la <a target='_blank' href='http://unistra.fr'>Universidad de Estrasburgo</a>.",
+        "about-paragraph3": "Obtuve mi doble Doctorado en Física en el <a target='_blank' href='http://scuoledidottorato.unicatt.it/phdschools/science-home'>Programa Internacional de Doctorado en Ciencias</a> ofrecido por la <a target='_blank' href='http://dipartimenti.unicatt.it/dmf'>Università Cattolica del Sacro Cuore</a> y la <a target='_blank' href='https://science.nd.edu'>University of Notre Dame</a>. En el periodo de mi Doctorado he trabajado entre el <a href='https://centridiricerca.unicatt.it/ilamp-interdisciplinary-laboratories-for-advanced-materials-physics-i-lamp-quantum-biology'>grupo de Biología Quántica</a>, asesorado por el Prof. <a href='https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html'>G. Luca Celardo</a> y por el Prof. <a href='https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo'>Fausto Borgonovi</a> (UCSC) y el grupo de <a href='http://sites.nd.edu/condensed-matter-theory/'>Materia Condensada</a>, asesorado por el Prof. <a href='https://physics.nd.edu/people/faculty/boldizs-aacute-r-jank-oacute-o/'>Boldizsár Jankó</a> (UND).",
+        "about-paragraph4": "Recibí mi Título de Maestría en Física por la <a target='_blank' href='http://dipartimenti.unicatt.it/dmf'>Università Cattolica del Sacro Cuore</a> y mis asesores de tesis fueron el Prof. <a href='https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html'>G. Luca Celardo</a> y el Prof. <a href='https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo'>Fausto Borgonovi</a>.",
+
+        // --- Short CV ---
+        "cv-education-title": "Educación",
+        "cv-employment-title": "Trabajos",
+        "cv-download": "Descarga CV (inglés)",
+        "cv-download-it": "Descarga CV (italiano)",
+
+        // --- Education ---
+        "education-phd": "Doctorado; Ene 2017 - Feb 2021, Física, <a href='http://scuoledidottorato.unicatt.it/phdschools/science-home'>UCSC Brescia</a> & <a target='_blank' href='https://science.nd.edu/'>University of Notre Dame</a>",
+        "education-msc": "Maestría; Oct 2013 - Feb 2016, Física, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+        "education-bsc": "Licenciatura; Oct 2010 - Sep 2013, Física, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+
+        // --- Employment ---
+        "employment-postdoc-uds": "Post-doc; Mar 2025 - Ahora, <a href='https://www.uni-saarland.de/en/home.html'>UdS</a>",
+        "employment-postdoc-unistra": "Post-doc; Avr 2021 - Mar 2025, <a href='http://unistra.fr'>Unistra</a>",
+        "employment-ta": "Profesor auxiliar; Nov 2017 - Dic 2017, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+        "employment-ra": "Investigador; Apr 2016 - Dic 2016, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+
+        // --- Research Interests ---
+        "research-title": "Intereses de investigación",
+        "research-description": "Me interesan los sistemas cuánticos fuertemente acoplados a cavidades ópticas, la interacción entre la cooperatividad, el desorden y el ruido, y lo que esto implica sobre el transporte cuántico, también en el contexto de la Física de muchos cuerpos.",
+        "research-current-title": "Intereses actuales",
+        "research-past-title": "Intereses pasados",
+        "research-current-item1": "Óptica cuántica",
+        "research-current-item2": "Cavity QED",
+        "research-current-item3": "Física de muchos cuerpos",
+        "research-current-item4": "Efectos de la cooperatividad",
+        "research-current-item5": "Transporte cuántico",
+        "research-past-item1": "Validez del uso de Hamiltonianos non-Hermitianos para el estudio de la dinámica de sistemas cuánticos abiertos",
+        "research-past-item2": "Caos cuántico y termalización en sistemas aislados",
+        "research-past-item3": "Teoría común para diferentes efectos cooperativos",
+        "research-past-item4": "Súperfluorescencia en superlattices de nanocristales de CsPbX3",
+        "research-past-item5": "Interacción de superradianza, coherencia y temperatura",
+        "research-past-item6": "Superradianza y láser",
+
+        // --- Publications ---
+        "publications-title": "Publicaciones",
+        "publications-download": "Descarga",
+
+        // --- Alt Texts (for images) ---
+        "alt-2026-1": "Complejidad temporal de una búsqueda cuántica monitorizada con reinicio",
+        "alt-2025-1": "Transición de fase invariante de escala de bosones desordenados en una dimensión",
+        "alt-2025-2": "Desorden en el transporte y química modificados por cavidad",
+        "alt-2025-3": "Relación entre estructura y funcionalidad en el complejo de antena fotosintética de bacterias verdes del azufre: eficiencia bajo bombeo de luz solar natural",
+        "alt-2024-1": "Conductancia eléctrica extraordinaria a través de polímeros amorfos no conductores bajo acoplamiento vibracional fuerte",
+        "alt-2024-2": "Multifractalidad en el modelo de Tavis-Cummings desordenado en interacción",
+        "alt-2024-3": "Simulaciones a gran escala de sistemas de antenas fotosintéticas: interacción entre cooperatividad y desorden",
+        "alt-2024-4": "Estabilidad universal de sistemas unidimensionales coherentemente difusivos con respecto a la decoherencia",
+        "alt-2024-5": "Localización de la luz en tres dimensiones: un borde de movilidad en el eje imaginario en hamiltonianos no hermitianos",
+        "alt-2023-1": "Difusión anómala en el modelo de Haken-Strobl-Reineker de largo alcance",
+        "alt-2023-2": "Modelos de spin aleatorios ingenieriles con átomos en una cavidad de alta finesa",
+        "alt-2023-3": "Robustez mejorada y cruce dimensional de la superradiancia en superredes de nanocristales cuboidales",
+        "alt-2022-1": "Cosecha de luz eficiente y detección de fotones mediante efectos cooperativos diseñados",
+        "alt-2021-1": "Láseres inspirados en la naturaleza bombeados por luz solar",
+        "alt-2021-2": "Transporte mejorado por el desorden y independiente del desorden con salto de largo alcance: aplicación a cadenas moleculares en cavidades ópticas",
+        "alt-2020-1": "Decoherencia térmica de la superradiancia en superredes de nanocristales de perovskita de haluro de plomo",
+        "alt-2019-1": "Brechas de energía reales e imaginarias: una comparación entre la superradiancia de excitación única y la superconductividad",
+        "alt-2019-2": "Coherencia macroscópica como propiedad emergente en nanotubos moleculares",
+        "alt-2017-1": "Temperatura de un autoestado caótico individual",
+        "alt-2015-1": "Enfo de hamiltoniano no hermitiano para el transporte cuántico en redes desordenadas con sumideros",
+        "alt-2014-1": "Superradiancia, desorden y el hamiltoniano no hermitiano en sistemas cuánticos abiertos",
+
+        // --- Contact ---
+        "contact-title": "Contactos",
+        "contact-address": "Dirección:",
+        "contact-room": "Oficina:",
+        "contact-phone": "Teléfono:",
+        "contact-email": "Correo:",
+
+        // --- Get in Touch ---
+        "get-in-touch-title": "Enlaces para contactarme",
+        "get-in-touch-work": "Profesional",
+        "get-in-touch-personal": "Personal",
+        "get-in-touch-skype": "Skype",
+
+        // --- Footer ---
+        "footer-home": "Home",
+        "footer-about": "Sobre mi",
+        "footer-research": "Investigación",
+        "footer-publications": "Publicaciones",
+        "footer-contact": "Contactos",
+        "footer-copyright": "Gracias a <a href='https://github.com/MasterToninus/MasterToninus.github.io'>Antonio M. Miti</a> por el tema personalizado.<br>Gracias a <a href='https://github.com/BlackrockDigital/startbootstrap-landing-page'>BlackrockDigital</a> por el tema original.<br>Fotos de fondo de título, contactos y banner &copy; 2017-2019 Francesco Mattiotti. Foto de retrato &copy; 2023 Swayangdipta Bera. Reservados todos los derechos."
+      },
+
+      it: {
+        // --- Navigation ---
+        "nav-about": "Chi sono",
+        "nav-research": "Ricerca",
+        "nav-publications": "Pubblicazioni",
+        "nav-contact": "Contatti",
+
+        // --- Header ---
+        "header-subtitle": "Post-Doc in Fisica",
+
+        // --- About Me ---
+        "about-title": "Chi sono",
+        "about-paragraph1": "Sono un post-doc nel gruppo <a target='_blank' href='https://www.uni-saarland.de/lehrstuhl/morigi.html'>Theoretical Quantum Physics</a> presso la <a target='_blank' href='https://www.uni-saarland.de/en/home.html'>Università del Saarland</a>.",
+        "about-paragraph2": "In precedenza, sono stato post-doc nel gruppo <a target='_blank' href='http://qmtheory.fr'>Quantum Matter Theory</a> presso il <a target='_blank' href='https://www.cesq.eu'>Centre Européen de Sciences Quantiques (CESQ)</a> - <a target='_blank' href='http://isis.unistra.fr'>Institut de Science et d'Ingénierie Supramoléculaires (ISIS)</a> dell'<a target='_blank' href='http://unistra.fr'>Università di Strasburgo</a>.",
+        "about-paragraph3": "Ho ottenuto il mio Dottorato in Fisica (doppio titolo) nell'ambito dell'<a target='_blank' href='http://scuoledidottorato.unicatt.it/phdschools/science-home'>International Doctoral Program in Science</a> offerto congiuntamente dall'<a target='_blank' href='http://dipartimenti.unicatt.it/dmf'>Università Cattolica del Sacro Cuore</a> e da <a target='_blank' href='https://science.nd.edu'>University of Notre Dame</a>. Durante il mio Dottorato ho diviso il mio lavoro tra il <a href='https://centridiricerca.unicatt.it/ilamp-interdisciplinary-laboratories-for-advanced-materials-physics-i-lamp-quantum-biology'>gruppo Quantum Biology</a>, supervisionato dai Prof. <a href='https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html'>G. Luca Celardo</a> e <a href='https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo'>Fausto Borgonovi</a> (UCSC), e il gruppo <a href='http://sites.nd.edu/condensed-matter-theory/'>Condensed Matter</a>, supervisionato dal Prof. <a href='https://physics.nd.edu/people/faculty/boldizs-aacute-r-jank-oacute-o/'>Boldizsár Jankó</a> (UND).",
+        "about-paragraph4": "Ho ricevuto la Laurea Magistrale in Fisica dall'<a target='_blank' href='http://dipartimenti.unicatt.it/dmf'>Università Cattolica del Sacro Cuore</a> ed ho scritto la mia Tesi sotto la supervisione dei Prof. <a href='https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html'>G. Luca Celardo</a> e <a href='https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo'>Fausto Borgonovi</a>.",
+
+        // --- Short CV ---
+        "cv-education-title": "Istruzione",
+        "cv-employment-title": "Impieghi",
+        "cv-download": "Scarica CV (inglese)",
+        "cv-download-it": "Scarica CV (italiano)",
+
+        // --- Education ---
+        "education-phd": "Ph.D.; Jan 2017 - Feb 2021, Fisica, <a href='http://scuoledidottorato.unicatt.it/phdschools/science-home'>UCSC Brescia</a> & <a target='_blank' href='https://science.nd.edu/'>University of Notre Dame</a>",
+        "education-msc": "Laurea Magistrale; Ottobre 2013 - Febbraio 2016, Fisica, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+        "education-bsc": "Laurea triennale; Ottobre 2010 - Settembre 2013, Fisica, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+
+        // --- Employment ---
+        "employment-postdoc-uds": "Post-doc; Marzo 2025 - Presente, <a href='http://unistra.fr'>UdS</a>",
+        "employment-postdoc-unistra": "Post-doc; Aprile 2021 - Marzo 2025, <a href='http://unistra.fr'>Unistra</a>",
+        "employment-ta": "Esercitatore; Novembre 2017 - Dicembre 2017, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+        "employment-ra": "Collaboratore a progetto; Aprile 2016 - Dicembre 2016, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+
+        // --- Research Interests ---
+        "research-title": "Interessi di ricerca",
+        "research-description": "Sono interessato a sistemi quantistici fortemente accoppiati a cavità ottiche, all'interazione tra cooperatività, disordine e rumore, e ciò che questo implica sul trasporto quantistico, anche nel contesto della Fisica a molti corpi.",
+        "research-current-title": "Interessi di ricerca attuali",
+        "research-past-title": "Interessi di ricerca passati",
+        "research-current-item1": "Ottica quantistica",
+        "research-current-item2": "Cavity QED",
+        "research-current-item3": "Fisica a molti corpi",
+        "research-current-item4": "Effetti cooperativi",
+        "research-current-item5": "Trasporto quantistico",
+        "research-past-item1": "Validità dell'approccio con Hamiltoniane non-Hermitiane alla dinamica di sistemi quantistici aperti",
+        "research-past-item2": "Caos quantistico e termalizzazione in sistemi isolati",
+        "research-past-item3": "Base teorica comune a diversi effetti cooperativi",
+        "research-past-item4": "Superfluorescenza in superreticoli di nanocristalli di CsPbX3",
+        "research-past-item5": "Interazione tra superradianza, coerenza e temperatura",
+        "research-past-item6": "Superradianza e laser",
+
+        // --- Publications ---
+        "publications-title": "Pubblicazioni",
+        "publications-download": "Scarica",
+
+        // --- Alt Texts (for images) ---
+        "alt-2026-1": "Complessità temporale di una ricerca quantistica monitorata con riavvio",
+        "alt-2025-1": "Transizione di fase invariante di scala di bosoni disordinati in una dimensione",
+        "alt-2025-2": "Disordine nel trasporto e nella chimica modificati dalla cavità",
+        "alt-2025-3": "Relazione tra struttura e funzionalità nel complesso di antenna fotosintetica di batteri verdi dello zolfo: efficienza sotto pompaggio di luce solare naturale",
+        "alt-2024-1": "Conduttanza elettrica straordinaria attraverso polimeri amorfi non conduttivi sotto forte accoppiamento vibrazionale",
+        "alt-2024-2": "Multifrattalità nel modello di Tavis-Cummings disordinato in interazione",
+        "alt-2024-3": "Simulazioni su larga scala di sistemi di antenne fotosintetiche: interazione tra cooperatività e disordine",
+        "alt-2024-4": "Stabilità universale di sistemi unidimensionali coerentemente diffusivi rispetto alla decoerenza",
+        "alt-2024-5": "Localizzazione della luce in tre dimensioni: un bordo di mobilità nell'asse immaginario negli hamiltoniani non hermitiani",
+        "alt-2023-1": "Diffusione anomala nel modello di Haken-Strobl-Reineker a lungo raggio",
+        "alt-2023-2": "Modelli di spin casuali ingegnerizzati con atomi in una cavità ad alta finesse",
+        "alt-2023-3": "Robustezza migliorata e crossover dimensionale della superradianza in superreticoli di nanocristalli cuboidali",
+        "alt-2022-1": "Raccolta di luce efficiente e rilevamento di fotoni tramite effetti cooperativi ingegnerizzati",
+        "alt-2021-1": "Laser a pompaggio solare naturale ispirati alla biologia",
+        "alt-2021-2": "Trasporto potenziato dal disordine e indipendente dal disordine con salto a lungo raggio: applicazione a catene molecolari in cavità ottiche",
+        "alt-2020-1": "Decoerenza termica della superradianza in superreticoli di nanocristalli di perovskite di alogenuro di piombo",
+        "alt-2019-1": "Gap di energia reali e immaginari: un confronto tra superradianza a eccitazione singola e superconduttività",
+        "alt-2019-2": "Coerenza macroscopica come proprietà emergente nei nanotubi molecolari",
+        "alt-2017-1": "Temperatura di un auto-stato caotico singolo",
+        "alt-2015-1": "Approccio hamiltoniano non hermitiano al trasporto quantistico in reti disordinate con pozzi",
+        "alt-2014-1": "Superradianza, disordine e l'hamiltoniano non hermitiano nei sistemi quantistici aperti",
+
+        // --- Contact ---
+        "contact-title": "Contatti",
+        "contact-address": "Indirizzo:",
+        "contact-room": "Ufficio:",
+        "contact-phone": "Telefono:",
+        "contact-email": "E-mail:",
+
+        // --- Get in Touch ---
+        "get-in-touch-title": "Link per contattarmi",
+        "get-in-touch-work": "Professionale",
+        "get-in-touch-personal": "Personale",
+        "get-in-touch-skype": "Skype",
+
+        // --- Footer ---
+        "footer-home": "Home",
+        "footer-about": "Chi sono",
+        "footer-research": "Ricerca",
+        "footer-publications": "Pubblicazioni",
+        "footer-contact": "Contatti",
+        "footer-copyright": "Un ringraziamento ad <a href='https://github.com/MasterToninus/MasterToninus.github.io'>Antonio M. Miti</a> per il tema personalizzato.<br>Un ringraziamento a <a href='https://github.com/BlackrockDigital/startbootstrap-landing-page'>BlackrockDigital</a> per il tema originale.<br>Fotografie sfondo titolo, contatti e banner &copy; 2017-2019 Francesco Mattiotti. Fotografia primo piano &copy; 2023 Swayangdipta Bera. Tutti i diritti riservati."
+      },
+
+    fr: {
+        // --- Navigation ---
+        "nav-about": "À propos",
+        "nav-research": "Recherche",
+        "nav-publications": "Publications",
+        "nav-contact": "Contact",
+      
+        // --- Header ---
+        "header-subtitle": "Post-doctorant en physique",
+      
+        // --- About Me ---
+        "about-title": "À propos",
+        "about-paragraph1": "Je suis post-doctorant dans le groupe <a target='_blank' href='https://www.uni-saarland.de/lehrstuhl/morigi.html'>Physique Quantique Théorique</a> à l'<a target='_blank' href='https://www.uni-saarland.de/en/home.html'>Université de la Sarre</a>.",
+        "about-paragraph2": "Auparavant, j’ai été post-doctorant dans le groupe <a target='_blank' href='http://qmtheory.fr'>Théorie de la Matière Quantique</a> au <a target='_blank' href='https://www.cesq.eu'>Centre Européen de Sciences Quantiques (CESQ)</a> - <a target='_blank' href='http://isis.unistra.fr'>Institut de Science et d’Ingénierie Supramoléculaires (ISIS)</a> de l'<a target='_blank' href='http://unistra.fr'>Université de Strasbourg</a>.",
+        "about-paragraph3": "J’ai obtenu mon double diplôme de doctorat en physique dans le cadre du <a target='_blank' href='http://scuoledidottorato.unicatt.it/phdschools/science-home'>Programme Doctoral International en Sciences</a>, proposé conjointement par l'<a target='_blank' href='http://dipartimenti.unicatt.it/dmf'>Università Cattolica del Sacro Cuore</a> et l'<a target='_blank' href='https://science.nd.edu'>Université de Notre Dame</a>. Pendant mon doctorat, j’ai travaillé entre le groupe <a href='https://centridiricerca.unicatt.it/ilamp-interdisciplinary-laboratories-for-advanced-materials-physics-i-lamp-quantum-biology'>Biologie Quantique</a>, sous la supervision du Pr <a href='https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html'>G. Luca Celardo</a> et du Pr <a href='https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo'>Fausto Borgonovi</a> (UCSC), et le groupe <a href='http://sites.nd.edu/condensed-matter-theory/'>Matière Condensée</a>, sous la supervision du Pr <a href='https://physics.nd.edu/people/faculty/boldizs-aacute-r-jank-oacute-o/'>Boldizsár Jankó</a> (UND).",
+        "about-paragraph4": "J’ai reçu mon diplôme de master en physique de l'<a target='_blank' href='http://dipartimenti.unicatt.it/dmf'>Università Cattolica del Sacro Cuore</a>, et j’ai écrit ma thèse sous la supervision du Pr <a href='https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html'>G. Luca Celardo</a> et du Pr <a href='https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo'>Fausto Borgonovi</a>.",
+      
+        // --- Short CV ---
+        "cv-education-title": "Formation",
+        "cv-employment-title": "Emplois",
+        "cv-download": "Télécharger le CV (anglais)",
+        "cv-download-it": "Télécharger le CV (italien)",
+      
+        // --- Education ---
+        "education-phd": "Doctorat ; janv. 2017 - fév. 2021, Physique, <a href='http://scuoledidottorato.unicatt.it/phdschools/science-home'>UCSC Brescia</a> & <a target='_blank' href='https://science.nd.edu/'>Université de Notre Dame</a>",
+        "education-msc": "Master ; oct. 2013 - fév. 2016, Physique, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+        "education-bsc": "Licence ; oct. 2010 - sept. 2013, Physique, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+      
+        // --- Employment ---
+        "employment-postdoc-uds": "Post-doctorant ; mars 2025 - aujourd’hui, <a href='https://www.uni-saarland.de/en/home.html'>UdS</a>",
+        "employment-postdoc-unistra": "Post-doctorant ; avr. 2021 - mars 2025, <a href='http://unistra.fr'>Unistra</a>",
+        "employment-ta": "Assistant d’enseignement ; nov. 2017 - déc. 2017, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+        "employment-ra": "Assistant de recherche ; avr. 2016 - déc. 2016, <a href='http://dipartimenti.unicatt.it/dmf'>UCSC Brescia</a>",
+      
+        // --- Research Interests ---
+        "research-title": "Intérêts de recherche",
+        "research-description": "Je m’intéresse aux systèmes quantiques fortement couplés à des cavités optiques, à l’interaction entre la coopérativité, le désordre et le bruit, et à leurs implications sur le transport quantique, également dans le contexte de la physique à N corps.",
+        "research-current-title": "Intérêts de recherche actuels",
+        "research-past-title": "Intérêts de recherche passés",
+        "research-current-item1": "Optique quantique",
+        "research-current-item2": "QED en cavité",
+        "research-current-item3": "Physique à N corps",
+        "research-current-item4": "Coopérativité",
+        "research-current-item5": "Transport quantique",
+        "research-past-item1": "Validité de l’approche hamiltonienne non hermitienne pour la dynamique des systèmes quantiques ouverts",
+        "research-past-item2": "Chaos quantique et thermalisation dans les systèmes fermés",
+        "research-past-item3": "Cadre théorique commun pour différents effets coopératifs",
+        "research-past-item4": "Superfluorescence dans les superréseaux de nanocristaux de pérovskite aux halogénures de plomb et césium",
+        "research-past-item5": "Interactions entre superradiance, cohérence et température",
+        "research-past-item6": "Superradiance et effet laser",
+      
+        // --- Publications ---
+        "publications-title": "Publications",
+        "publications-download": "Télécharger",
+      
+        // --- Alt Texts (for images) ---
+        "alt-2026-1": "Complexité temporelle d’une recherche quantique surveillée avec réinitialisation",
+        "alt-2025-1": "Transition de phase invariante d’échelle de bosons désordonnés en une dimension",
+        "alt-2025-2": "Désordre dans le transport et la chimie modifiés par cavité",
+        "alt-2025-3": "Relation entre la structure et la fonctionnalité dans le complexe d’antenne photosynthétique de bactéries vertes soufrées : efficacité sous pompage de lumière naturelle",
+        "alt-2024-1": "Conductance électrique extraordinaire à travers des polymères amorphes non conducteurs sous couplage vibrationnel fort",
+        "alt-2024-2": "Multifractalité dans le modèle de Tavis-Cummings désordonné en interaction",
+        "alt-2024-3": "Simulations à grande échelle de systèmes d’antennes photosynthétiques : interaction entre coopérativité et désordre",
+        "alt-2024-4": "Stabilité universelle des systèmes unidimensionnels diffusifs de manière cohérente par rapport à la décohérence",
+        "alt-2024-5": "Localisation de la lumière en trois dimensions : un bord de mobilité sur l’axe imaginaire dans les hamiltoniens non hermitiens",
+        "alt-2023-1": "Diffusion anormale dans le modèle de Haken-Strobl-Reineker à longue portée",
+        "alt-2023-2": "Ingénierie de modèles de spin aléatoires avec des atomes dans une cavité à haute finesse",
+        "alt-2023-3": "Robustesse améliorée et croisement dimensionnel de la superradiance dans les superréseaux de nanocristaux cuboïdaux",
+        "alt-2022-1": "Récolte efficace de lumière et détection de photons via des effets coopératifs conçus",
+        "alt-2021-1": "Lasers pompés par la lumière naturelle du soleil inspirés de la biologie",
+        "alt-2021-2": "Transport amélioré par le désordre et indépendant du désordre avec saut à longue portée : application aux chaînes moléculaires dans des cavités optiques",
+        "alt-2020-1": "Décohérence thermique de la superradiance dans les superréseaux de nanocristaux de pérovskite aux halogénures de plomb",
+        "alt-2019-1": "Écarts d’énergie réels et imaginaires : une comparaison entre la superradiance à excitation unique et la supraconductivité",
+        "alt-2019-2": "Cohérence macroscopique en tant que propriété émergente dans les nanotubes moléculaires",
+        "alt-2017-1": "Température d’un état propre chaotique unique",
+        "alt-2015-1": "Approche hamiltonienne non hermitienne du transport quantique dans les réseaux désordonnés avec puits",
+        "alt-2014-1": "Superradiance, désordre et l’hamiltonien non hermitien dans les systèmes quantiques ouverts",
+      
+        // --- Contact ---
+        "contact-title": "Contact",
+        "contact-address": "Adresse :",
+        "contact-room": "Bureau :",
+        "contact-phone": "Téléphone :",
+        "contact-email": "E-mail :",
+      
+        // --- Get in Touch ---
+        "get-in-touch-title": "Me contacter",
+        "get-in-touch-work": "Professionnel",
+        "get-in-touch-personal": "Personnel",
+        "get-in-touch-skype": "Skype",
+      
+        // --- Footer ---
+        "footer-home": "Accueil",
+        "footer-about": "À propos",
+        "footer-research": "Recherche",
+        "footer-publications": "Publications",
+        "footer-contact": "Contact",
+        "footer-copyright": "Merci à <a href='https://github.com/MasterToninus/MasterToninus.github.io'>Antonio M. Miti</a> pour le thème personnalisé.<br>Merci à <a href='https://github.com/BlackrockDigital/startbootstrap-landing-page'>BlackrockDigital</a> pour le thème original.<br>Photos de fond de titre, de contact et de bannière &copy; 2017-2019 Francesco Mattiotti. Photo de portrait &copy; 2023 Swayangdipta Bera. Tous droits réservés."
+      }
+    };
+
+    // ===== TRANSLATION LOGIC =====
+    function applyTranslations(language) {
+      const t = translations[language] || translations.en; // Fallback to English
+      document.querySelectorAll('[data-translate]').forEach(element => {
+        const key = element.getAttribute('data-translate');
+        if (t[key]) element.innerHTML = t[key];
+      });
+      // Apply translations to alt attributes
+      document.querySelectorAll('[data-translate-alt]').forEach(element => {
+        const key = element.getAttribute('data-translate-alt');
+        if (t[key]) element.setAttribute('alt', t[key]);
+      });
+    }
+
+    // ===== SLIDESHOW LOGIC =====
+    function initSlideshow() {
+      const slides = document.getElementById('slides');
+      const slideItems = document.querySelectorAll('.slideshow-slide');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const playPauseBtn = document.getElementById('playPauseBtn');
+      const playPauseIcon = playPauseBtn.querySelector('i');
+
+      let currentIndex = 0;
+      let autoPlayInterval;
+      let isPlaying = false;
+
+      function updateSlidePosition() {
+        slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+      }
+
+      function nextSlide() {
+        currentIndex = (currentIndex + 1) % slideItems.length;
+        updateSlidePosition();
+      }
+
+      function prevSlide() {
+        currentIndex = (currentIndex - 1 + slideItems.length) % slideItems.length;
+        updateSlidePosition();
+      }
+
+      nextBtn.addEventListener('click', nextSlide);
+      prevBtn.addEventListener('click', prevSlide);
+
+      function toggleAutoPlay() {
+        if (isPlaying) {
+          clearInterval(autoPlayInterval);
+          playPauseIcon.className = 'fa fa-play';
+        } else {
+          autoPlayInterval = setInterval(nextSlide, 5000);
+          playPauseIcon.className = 'fa fa-pause';
+        }
+        isPlaying = !isPlaying;
+      }
+
+      playPauseBtn.addEventListener('click', toggleAutoPlay);
+      updateSlidePosition();
+      toggleAutoPlay();
+    }
+
+    // ===== INITIALIZE =====
+    document.addEventListener('DOMContentLoaded', () => {
+      const userLanguage = navigator.language.split('-')[0];
+      applyTranslations(userLanguage);
+      initSlideshow();
+    });
+  </script>
 </head>
 
 <body>
-
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <div class="container">
-      <a class="navbar-brand" href="#">Francesco</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#about">About Me</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#research">Research Interests</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#publications">Publications</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#contact">Contact</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="it.html"><img class="img" height="20px" src="figures/it.png" alt="Italiano"></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="es.html"><img class="img" height="20px" src="figures/es.png"
-                alt="Espa&ntilde;ol"></a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Header -->
-  <header class="intro-header">
-    <div class="container">
-      <div class="intro-message">
-        <h1>Francesco Mattiotti</h1>
-        <h3>Post-Doc in Physics</h3>
-        <hr class="intro-divider">
-        <ul class="list-inline intro-social-buttons">
-          <li class="list-inline-item">
-            <a href="https://scholar.google.com/citations?user=OHOtcpYAAAAJ" class="btn btn-default btn-lg">
-              <i class="fa fa-google fa-fw"></i>
-              <span class="network-name">Google Scholar</span>
-            </a>
-          </li>
-          <li class="list-inline-item">
-            <a href="https://www.researchgate.net/profile/Francesco_Mattiotti" class="btn btn-default btn-lg">
-              <i class="fa fa-flask fa-fw"></i>
-              <span class="network-name">ResearchGate</span>
-            </a>
-          </li>
-          <li class="list-inline-item">
-            <a href="https://orcid.org/0000-0002-2532-8876" class="btn btn-default btn-lg">
-              <i class="fa fa-id-badge fa-fw"></i>
-              <span class="network-name">ORCID</span>
-            </a>
-          </li>
-          <li class="list-inline-item">
-            <a href="https://www.linkedin.com/in/francesco-mattiotti-a76813144/" class="btn btn-default btn-lg">
-              <i class="fa fa-linkedin fa-fw"></i>
-              <span class="network-name">Linkedin</span>
-            </a>
-          </li>
-          <li class="list-inline-item">
-            <a href="https://github.com/matiot" class="btn btn-default btn-lg">
-              <i class="fa fa-github fa-fw"></i>
-              <span class="network-name">Github</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </header>
-
-  <!--              --> <!--              -->
-  <!-- Page Content --> <!--              -->
-
-  <!-- About Me -->
-  <a name="about"></a>
-  <section class="content-section-a">
-
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-5 ml-auto">
-          <hr class="section-heading-spacer">
-          <div class="clearfix"></div>
-          <h2 class="section-heading">About Me</h2>
-          <p class="lead">
-            I am a post-doc in the <a target="_blank"
-              href="https://www.uni-saarland.de/lehrstuhl/morigi.html">Theoretical Quantum Physics group</a> at the <a
-              target="_blank" href="https://www.uni-saarland.de/en/home.html">University of Saarland</a>.
-          </p>
-          <p class="lead">
-            Before, I have been a post-doc in the <a target="_blank" href="http://qmtheory.fr">Quantum Matter Theory
-              group</a> at the <a target="_blank" href="https://www.cesq.eu">Centre Européen de Sciences Quantiques
-              (CESQ)</a> - <a target="_blank" href="http://isis.unistra.fr">Institut de Science et d'Ing&eacute;nierie
-              Supramol&eacute;culaires (ISIS)</a> of the <a target="_blank" href="http://unistra.fr">University of
-              Strasbourg</a>.
-          </p>
-          <p class="lead">
-            I obtained my double Ph.D. degree in Physics in the <a target="_blank"
-              href="http://scuoledidottorato.unicatt.it/phdschools/science-home">International Doctoral Program in
-              Science</a>
-            jointly offered by
-            <a target="_blank" href="http://dipartimenti.unicatt.it/dmf">Universit&agrave; Cattolica del Sacro Cuore</a>
-            and
-            <a target="_blank" href="https://science.nd.edu">University of Notre Dame</a>.
-            During my Ph.D. I worked between the <a
-              href="https://centridiricerca.unicatt.it/ilamp-interdisciplinary-laboratories-for-advanced-materials-physics-i-lamp-quantum-biology">Quantum
-              Biology group</a>, under the supervision of Prof. <a
-              href="https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html">G. Luca Celardo</a> and Prof. <a
-              href="https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo">Fausto Borgonovi</a>
-            (UCSC), and the <a href="http://sites.nd.edu/condensed-matter-theory/">Condensed Matter group</a>, under the
-            supervision of Prof. <a
-              href="https://physics.nd.edu/people/faculty/boldizs-aacute-r-jank-oacute-o/">Boldizs&aacute;r
-              Jank&oacute;</a> (UND).
-          </p>
-          <p class="lead">
-            I received my Master's degree in Physics from
-            <a target="_blank" href="http://dipartimenti.unicatt.it/dmf">Universit&agrave; Cattolica del Sacro Cuore</a>
-            and I wrote my thesis under the supervision of Prof.
-            <a href="https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html">G. Luca Celardo</a> and Prof. <a
-              href="https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo">Fausto Borgonovi</a>.
-          </p>
-        </div>
-        <div class="col-lg-5 mr-auto">
-          <p class="head">
-          </p>
-          <a href="figures/trequarti-cesq.jpg">
-            <img class="img-fluid" src="figures/trequarti-cesq.jpg" alt="My picture">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+      <div class="container">
+        <a class="navbar-brand" href="#">Francesco</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#about" data-translate="nav-about">About Me</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#research" data-translate="nav-research">Research</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#contact" data-translate="nav-contact">Contact</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="applyTranslations('en')"><img class="img" height="20px" src="figures/en.png" alt="English"></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="applyTranslations('es')"><img class="img" height="20px" src="figures/es.png" alt="Español"></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="applyTranslations('fr')"><img class="img" height="20px" src="figures/fr.svg" alt="Français"></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" onclick="applyTranslations('it')"><img class="img" height="20px" src="figures/it.png" alt="Italiano"></a>
+            </li>
+          </ul>
         </div>
       </div>
+    </nav>
 
-    </div>
-    <!-- /.container -->
+    <!-- Header -->
+    <header class="intro-header">
+      <div class="container">
+        <div class="intro-message">
+          <h1>Francesco Mattiotti</h1>
+          <h3 data-translate="header-subtitle">Post-Doc in Physics</h3>
+          <hr class="intro-divider">
+          <ul class="list-inline intro-social-buttons">
+            <li class="list-inline-item">
+              <a href="https://scholar.google.com/citations?user=OHOtcpYAAAAJ" class="btn btn-default btn-lg">
+                <i class="fa fa-google fa-fw"></i>
+                <span class="network-name">Google Scholar</span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="https://www.researchgate.net/profile/Francesco_Mattiotti" class="btn btn-default btn-lg">
+                <i class="fa fa-flask fa-fw"></i>
+                <span class="network-name">ResearchGate</span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="https://orcid.org/0000-0002-2532-8876" class="btn btn-default btn-lg">
+                <i class="fa fa-id-badge fa-fw"></i>
+                <span class="network-name">ORCID</span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="https://www.linkedin.com/in/francesco-mattiotti-a76813144/" class="btn btn-default btn-lg">
+                <i class="fa fa-linkedin fa-fw"></i>
+                <span class="network-name">Linkedin</span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="https://github.com/matiot" class="btn btn-default btn-lg">
+                <i class="fa fa-github fa-fw"></i>
+                <span class="network-name">Github</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </header>
 
-    <!-- Short Cv -->
+    <!-- About Me -->
+    <a name="about"></a>
+    <section class="content-section-a">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-5 ml-auto">
+            <hr class="section-heading-spacer">
+            <div class="clearfix"></div>
+            <h2 class="section-heading" data-translate="about-title">About Me</h2>
+            <p class="lead" data-translate="about-paragraph1">
+              I am a post-doc in the <a target="_blank" href="https://www.uni-saarland.de/lehrstuhl/morigi.html">Theoretical Quantum Physics</a> group at the <a target="_blank" href="https://www.uni-saarland.de/en/home.html">University of Saarland</a>.
+            </p>
+            <p class="lead" data-translate="about-paragraph2">
+              Before, I have been a post-doc in the <a target="_blank" href="http://qmtheory.fr">Quantum Matter Theory</a> group at the <a target="_blank" href="https://www.cesq.eu">Centre Européen de Sciences Quantiques (CESQ)</a> - <a target="_blank" href="http://isis.unistra.fr">Institut de Science et d'Ingénierie Supramoléculaires (ISIS)</a> of the <a target="_blank" href="http://unistra.fr">University of Strasbourg</a>.
+            </p>
+            <p class="lead" data-translate="about-paragraph3">
+              I obtained my double Ph.D. degree in Physics in the <a target="_blank" href="http://scuoledidottorato.unicatt.it/phdschools/science-home">International Doctoral Program in Science</a> jointly offered by <a target="_blank" href="http://dipartimenti.unicatt.it/dmf">Università Cattolica del Sacro Cuore</a> and <a target="_blank" href="https://science.nd.edu">University of Notre Dame</a>. During my Ph.D. I worked between the <a href="https://centridiricerca.unicatt.it/ilamp-interdisciplinary-laboratories-for-advanced-materials-physics-i-lamp-quantum-biology">Quantum Biology group</a>, under the supervision of Prof. <a href="https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html">G. Luca Celardo</a> and Prof. <a href="https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo">Fausto Borgonovi</a> (UCSC), and the <a href="http://sites.nd.edu/condensed-matter-theory/">Condensed Matter group</a>, under the supervision of Prof. <a href="https://physics.nd.edu/people/faculty/boldizs-aacute-r-jank-oacute-o/">Boldizsár Jankó</a> (UND).
+            </p>
+            <p class="lead" data-translate="about-paragraph4">
+              I received my Master's degree in Physics from <a target="_blank" href="http://dipartimenti.unicatt.it/dmf">Università Cattolica del Sacro Cuore</a> and I wrote my thesis under the supervision of Prof. <a href="https://www.unifi.it/p-doc2-0-0-A-3f2c36293b272f-0.html">G. Luca Celardo</a> and Prof. <a href="https://docenti.unicatt.it/ppd2/en/docenti/06102/fausto-borgonovi/profilo">Fausto Borgonovi</a>.
+            </p>
+          </div>
+          <div class="col-lg-5 mr-auto">
+            <a href="figures/trequarti-cesq.jpg">
+              <img class="img-fluid" src="figures/trequarti-cesq.jpg" alt="My picture">
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Short CV -->
     <a name="cv"></a>
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-5 ml-auto">
-          <div class="clearfix"></div>
-          <h3>Education</h3>
-          <ul>
-            <li> Ph.D.; Jan 2017 - Feb 2021, Physics,
-              <a href="http://scuoledidottorato.unicatt.it/phdschools/science-home">UCSC Brescia</a> &
-              <a target="_blank" href="https://science.nd.edu/">University of Notre Dame</a>
-            </li>
-            <li> M.Sc.; Oct 2013 - Feb 2016, Physics, <a href="http://dipartimenti.unicatt.it/dmf">UCSC Brescia</a>
-            </li>
-            <li> B.Sc.; Oct 2010 - Sep 2013, Physics, <a href="http://dipartimenti.unicatt.it/dmf">UCSC Brescia</a>
-            </li>
-          </ul>
-        </div>
-        <div class="col-lg-5 mr-auto">
-          <h3>Employments</h3>
-          <ul>
-            <li> Post-doc; Mar 2025 - now, <a href="https://www.uni-saarland.de/en/home.html">UdS</a></li>
-            <li> Post-doc; Apr 2021 - Mar 2025, <a href="http://unistra.fr">Unistra</a></li>
-            <li> Teaching Assistant; Nov 2017 - Dec 2017, <a href="http://dipartimenti.unicatt.it/dmf">UCSC Brescia</a>
-            </li>
-            <li> Research Assistant; Apr 2016 - Dec 2016, <a href="http://dipartimenti.unicatt.it/dmf">UCSC Brescia</a>
-            </li>
-          </ul>
-          <a href="./cv/cven.pdf" class="btn btn-default btn-lg">
-            <i class="fa fa-file-pdf-o fa-fw"></i>
-            <span class="network-name">Download CV</span></a>
-        </div>
-      </div>
-
-    </div>
-    <!-- /.container -->
-  </section>
-
-
-
-  <!-- Research Interest -->
-  <a name="research"></a>
-  <section class="content-section-b">
-
-    <div class="container">
-
-      <div class="row">
-        <div class="col-lg-5 mr-auto order-lg-2">
-          <hr class="section-heading-spacer">
-          <div class="clearfix"></div>
-          <h2 class="section-heading">Research Interests</h2>
-          <p class="lead">
-            I am interested in quantum systems strongly coupled to optical cavities, the interplay of cooperativity with
-            disorder and noise and their implications on quantum transport, also in the context of many body physics.
-          </p>
-          <p class="lead">
-          <h3>Current research interests</h3>
-          </p>
-          <ul>
-            <li>Quantum Optics</li>
-            <li>Cavity QED</li>
-            <li>Many-body Physics</li>
-            <li>Cooperativity</li>
-            <li>Quantum Transport</li>
-          </ul>
-
-          <p class="lead">
-          <h3>Past research interests</h3>
-          </p>
-          <ul>
-            <li>Validity of non-Hermitian Hamiltonian approach to the dynamics of open quantum systems</li>
-            <li>Quantum chaos and thermalization in closed systems</li>
-            <li>Common theoretical framework for different cooperative effects</li>
-            <li>Superfluorescence in cesium lead halide perovskite nanocrystal superlattices</li>
-            <li>Interplay of superradiance, coherence and temperature</li>
-            <li>Superradiance and lasing</li>
-          </ul>
-
-        </div>
-        <div class="col-lg-5 ml-auto order-lg-1">
-          <a href="https://doi.org/10.1103/PhysRevB.109.064202"><img class="img-fluid center-block"
-              src="figures/fig1a.svg" alt="Multifractality in the interacting disordered Tavis-Cummings model"></a>
-          <br>
-          <a href="https://www.nature.com/articles/s41567-023-02033-3"><img class="img-fluid" src="figures/cqed.png"
-              alt="Engineering random spin models with atoms in a high-finesse cavity"></a>
-          <br>
-          <a href="https://doi.org/10.1103/PhysRevLett.131.053401"><img class="img-fluid" src="figures/dephasing.svg"
-              alt="Anomalous diffusion in the Long-Range Haken-Strobl-Reineker model"></a>
+    <section class="content-section-b">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-5 ml-auto">
+            <div class="clearfix"></div>
+            <h3 data-translate="cv-education-title">Education</h3>
+            <ul>
+              <li data-translate="education-phd">Ph.D.; Jan 2017 - Feb 2021, Physics, <a href="http://scuoledidottorato.unicatt.it/phdschools/science-home">UCSC Brescia</a> & <a target="_blank" href="https://science.nd.edu/">University of Notre Dame</a></li>
+              <li data-translate="education-msc">M.Sc.; Oct 2013 - Feb 2016, Physics, <a href="http://dipartimenti.unicatt.it/dmf">UCSC Brescia</a></li>
+              <li data-translate="education-bsc">B.Sc.; Oct 2010 - Sep 2013, Physics, <a href="http://dipartimenti.unicatt.it/dmf">UCSC Brescia</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-5 mr-auto">
+            <h3 data-translate="cv-employment-title">Employments</h3>
+            <ul>
+              <li data-translate="employment-postdoc-uds">Post-doc; Mar 2025 - now, <a href="https://www.uni-saarland.de/en/home.html">UdS</a></li>
+              <li data-translate="employment-postdoc-unistra">Post-doc; Apr 2021 - Mar 2025, <a href="http://unistra.fr">Unistra</a></li>
+              <li data-translate="employment-ta">Teaching Assistant; Nov 2017 - Dec 2017, <a href="http://dipartimenti.unicatt.it/dmf">UCSC Brescia</a></li>
+              <li data-translate="employment-ra">Research Assistant; Apr 2016 - Dec 2016, <a href="http://dipartimenti.unicatt.it/dmf">UCSC Brescia</a></li>
+            </ul>
+            <a href="./cv/cven.pdf" class="btn btn-default btn-lg">
+              <i class="fa fa-file-pdf-o fa-fw"></i>
+              <span class="network-name" data-translate="cv-download">Download CV (english)</span>
+            </a>
+            <a href="./cv/cvit.pdf" class="btn btn-default btn-lg">
+              <i class="fa fa-file-pdf-o fa-fw"></i>
+              <span class="network-name" data-translate="cv-download-it">Download CV (italian)</span>
+            </a>
+          </div>
         </div>
       </div>
+    </section>
 
-    </div>
-    <!-- /.container -->
+    <!-- Research Interest -->
+    <a name="research"></a>
+    <section class="content-section-a">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-5 mr-auto order-lg-2">
+            <hr class="section-heading-spacer">
+            <div class="clearfix"></div>
+            <h2 class="section-heading" data-translate="research-title">Research Interests</h2>
+            <p class="lead" data-translate="research-description">
+              I am interested in quantum systems strongly coupled to optical cavities, the interplay of cooperativity with disorder and noise and their implications on quantum transport, also in the context of many body physics.
+            </p>
+            <p class="lead">
+              <h3 data-translate="research-current-title">Current research interests</h3>
+            </p>
+            <ul>
+              <li data-translate="research-current-item1">Quantum Optics</li>
+              <li data-translate="research-current-item2">Cavity QED</li>
+              <li data-translate="research-current-item3">Many-body Physics</li>
+              <li data-translate="research-current-item4">Cooperativity</li>
+              <li data-translate="research-current-item5">Quantum Transport</li>
+            </ul>
+            <p class="lead">
+              <h3 data-translate="research-past-title">Past research interests</h3>
+            </p>
+            <ul>
+              <li data-translate="research-past-item1">Validity of non-Hermitian Hamiltonian approach to the dynamics of open quantum systems</li>
+              <li data-translate="research-past-item2">Quantum chaos and thermalization in closed systems</li>
+              <li data-translate="research-past-item3">Common theoretical framework for different cooperative effects</li>
+              <li data-translate="research-past-item4">Superfluorescence in cesium lead halide perovskite nanocrystal superlattices</li>
+              <li data-translate="research-past-item5">Interplay of superradiance, coherence and temperature</li>
+              <li data-translate="research-past-item6">Superradiance and lasing</li>
+            </ul>
+          </div>
+          <div class="col-lg-5 ml-auto">
+            <hr class="section-heading-spacer">
+            <div class="clearfix"></div>
+            <h2 class="section-heading" data-translate="publications-title">Publications</h2>
+            <div class="slideshow-container">
+              <div class="slideshow-slides" id="slides">
+                <!-- 2026 -->
+                <div class="slideshow-slide">
+                  <img src="figures/resetting.svg" data-translate-alt="alt-2026-1" alt="Time complexity of a monitored quantum search with resetting" />
+                  <div class="slideshow-caption">
+                    Emma C. King, Sayan Roy, Francesco Mattiotti, Maximilian Kiefer-Emmanouilidis, Markus Bläser, Giovanna Morigi<br>
+                    <strong>Time complexity of a monitored quantum search with resetting</strong><br>
+                    <div class="reference-line">
+                      <a href="https://arxiv.org/abs/2601.20560">arXiv:2601.20560 (2026)</a>
+                      <a href="./papers/2601.20560v1.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-  </section>
-  <!-- /.content-section-b -->
+                <!-- 2025 -->
+                <div class="slideshow-slide">
+                  <img src="figures/phasetransition.svg" data-translate-alt="alt-2025-1" alt="Scale-invariant phase transition of disordered bosons in one dimension" />
+                  <div class="slideshow-caption">
+                    Tanul Gupta, Guido Masella, Francesco Mattiotti, Nikolay V. Prokof'ev, Guido Pupillo<br>
+                    <strong>Scale-invariant phase transition of disordered bosons in one dimension</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1103/PhysRevB.111.L020503">Physical Review B 111, L020503 (2025)</a>
+                      <a href="./papers/PhysRevB.111.L020503-withSM.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-  <!-- Publications-->
-  <a name="publications"></a>
-  <section class="content-section-a">
+                <div class="slideshow-slide">
+                  <img src="figures/bookchapter.png" data-translate-alt="alt-2025-2" alt="Disorder in Cavity-modified Transport and Chemistry" />
+                  <div class="slideshow-caption">
+                    David Hagenmüller, Jérôme Dubail, Francesco Mattiotti, Guido Pupillo, Johannes Schachenmayer<br>
+                    <strong>Disorder in Cavity-modified Transport and Chemistry</strong><br>
+                    <a href="https://doi.org/10.1002/9781119783329.ch09">Polariton Chemistry (Wiley, 2025)</a>
+                  </div>
+                </div>
 
-    <div class="container">
+                <div class="slideshow-slide">
+                  <img src="figures/functionality.svg" data-translate-alt="alt-2025-3" alt="Relation between structure and functionality in photosynthetic antenna complex" />
+                  <div class="slideshow-caption">
+                    Alessia Valzelli, Francesco Mattiotti, Jianshu Cao, Giuseppe Luca Celardo<br>
+                    <strong>Relation between structure and functionality in photosynthetic antenna complex of green sulfur bacteria: efficiency under natural sunlight pumping</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1021/acs.jpcb.6c00303">The Journal of Physical Chemistry B (2026)</a>
+                      <a href="./papers/2510.19453v1.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-      <div class="row">
-        <div class="col-lg-5 ml-auto">
-          <hr class="section-heading-spacer">
-          <div class="clearfix"></div>
-          <h2 class="section-heading">Publications</h2>
-          <p class="lead">
-          <h3>2026</h3>
-          </p>
-          <ul>
-            <li>
-              Emma C. King, Sayan Roy, Francesco Mattiotti, Maximilian Kiefer-Emmanouilidis, Markus Bläser, Giovanna
-              Morigi, "Time complexity of a monitored quantum search with resetting", <a form style="display:inline"
-                href="https://arxiv.org/abs/2601.20560">arXiv:2601.20560 (2026)</a>.
-              <a href="./papers/2601.20560v1.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-          </ul>
+                <!-- 2024 -->
+                <div class="slideshow-slide">
+                  <img src="figures/jacs-cover.jpg" data-translate-alt="alt-2024-1" alt="Extraordinary electrical conductance through amorphous non-conducting polymers under vibrational strong coupling" />
+                  <div class="slideshow-caption">
+                    Sunil Kumar, Subha Biswas, Umar Rashid, Kavya S. Mony, Gokul Chandrasekharan, Francesco Mattiotti, Robrecht M. A. Vergauwe, David Hagenmuller, Veerabhadrarao Kaliginedi, Anoop Thomas<br>
+                    <strong>Extraordinary electrical conductance through amorphous non-conducting polymers under vibrational strong coupling</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1021/jacs.4c03016">Journal of the American Chemical Society 146, 18999 (2024)</a>
+                      <a href="./papers/2303.03777v2.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-          <p class="lead">
-          <h3>2025</h3>
-          </p>
-          <ul>
-            <li>
-              David Hagenmüller, Jérôme Dubail, Francesco Mattiotti, Guido Pupillo, Johannes Schachenmayer, "Disorder in
-              Cavity-modified Transport and Chemistry, in <a form style="display:inline"
-                href="https://doi.org/10.1002/9781119783329.ch09">Polariton Chemistry</a>, edited by J. Yuen-Zhou, N. C.
-              Giebink, and R. F. Ribeiro (Wiley, 2025) 1st ed., pp. 193–218.
-            </li>
-            <li>
-              Alessia Valzelli, Francesco Mattiotti, Jianshu Cao, Giuseppe Luca Celardo, "Relation between structure and
-              functionality in photosynthetic antenna complex of green sulfur bacteria: efficiency under natural
-              sunlight pumping", <a form style="display:inline" href="https://arxiv.org/abs/2510.19453">arXiv:2510.19453
-                (2025)</a>.
-              <a href="./papers/2510.19453v1.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-            <li>
-              Tanul Gupta, Guido Masella, Francesco Mattiotti, Nikolay V. Prokof'ev, Guido Pupillo, "Scale-invariant
-              phase transition of disordered bosons in one dimension", <a form style="display:inline"
-                href="https://doi.org/10.1103/PhysRevB.111.L020503">Physical Review B 111, L020503 (2025)</a>.
-              <a href="./papers/PhysRevB.111.L020503-withSM.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-          </ul>
+                <div class="slideshow-slide">
+                  <img src="figures/fig1a.svg" data-translate-alt="alt-2024-2" alt="Multifractality in the interacting disordered Tavis-Cummings model" />
+                  <div class="slideshow-caption">
+                    Francesco Mattiotti, Jérôme Dubail, David Hagenmüller, Johannes Schachenmayer, Jean-Philippe Brantut, Guido Pupillo<br>
+                    <strong>Multifractality in the interacting disordered Tavis-Cummings model</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1103/PhysRevB.109.064202">Physical Review B 109, 064202 (2024)</a>
+                      <a href="./papers/PhysRevB.109.064202.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-          <p class="lead">
-          <h3>2024</h3>
-          </p>
-          <ul>
-            <li>
-              Alessia Valzelli, Alice Boschetti, Francesco Mattiotti, Armin Kargol, Coleman Green, Fausto Borgonovi,
-              Giuseppe Luca Celardo, "Large scale simulations of photosynthetic antenna systems: interplay of
-              cooperativity and disorder", <a form style="display:inline"
-                href="https://doi.org/10.1021/acs.jpcb.4c02406">The Journal of Physical Chemistry B 128, 9643
-                (2024)</a>.
-              <a href="./papers/2404.08542v2.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-            <li>
-              Sunil Kumar, Subha Biswas, Umar Rashid, Kavya S. Mony, Gokul Chandrasekharan, Francesco Mattiotti,
-              Robrecht M. A. Vergauwe, David Hagenmuller, Veerabhadrarao Kaliginedi, Anoop Thomas, "Extraordinary
-              electrical conductance through amorphous non-conducting polymers under vibrational strong coupling", <a
-                form style="display:inline" href="https://doi.org/10.1021/jacs.4c03016">Journal of the American Chemical
-                Society 146, 18999 (2024)</a>.
-              <a href="./papers/2303.03777v2.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-            <li>
-              Fabricio S. Lozano-Negro, Emilio Alvarez Navarro, Nahum C. Chávez, Francesco Mattiotti, Fausto Borgonovi,
-              Horacio M. Pastawski, G. Luca Celardo, "Universal stability of coherently diffusive one-dimensional
-              systems with respect to decoherence", <a form style="display:inline"
-                href="https://doi.org/10.1103/PhysRevA.109.042213">Physical Review A 109, 042213 (2024)</a>.
-              <a href="./papers/PhysRevA.109.042213.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-            <li>
-              Giuseppe Luca Celardo, Mattia Angeli, Francesco Mattiotti, Robin Kaiser, "Localization of light in three
-              dimensions: a mobility edge in the imaginary axis in non-Hermitian Hamiltonians", <a form
-                style="display:inline" href="https://doi.org/10.1209/0295-5075/ad222c">Europhysics Letters 145, 35002
-                (2024)</a>.
-              <a href="./papers/Celardo_2024_EPL_145_35002-withSM.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-            <li>
-              Francesco Mattiotti, Jérôme Dubail, David Hagenmüller, Johannes Schachenmayer, Jean-Philippe Brantut, and
-              Guido Pupillo, "Multifractality in the interacting disordered Tavis-Cummings model", <a form
-                style="display:inline" href="https://doi.org/10.1103/PhysRevB.109.064202">Physical Review B 109, 064202
-                (2024)</a>.
-              <a href="./papers/PhysRevB.109.064202.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-          </ul>
+                <div class="slideshow-slide">
+                  <img src="figures/largescale.svg" data-translate-alt="alt-2024-3" alt="Large scale simulations of photosynthetic antenna systems" />
+                  <div class="slideshow-caption">
+                    Alessia Valzelli, Alice Boschetti, Francesco Mattiotti, Armin Kargol, Coleman Green, Fausto Borgonovi, Giuseppe Luca Celardo<br>
+                    <strong>Large scale simulations of photosynthetic antenna systems: interplay of cooperativity and disorder</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1021/acs.jpcb.4c02406">The Journal of Physical Chemistry B 128, 9643 (2024)</a>
+                      <a href="./papers/2404.08542v2.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-          <p class="lead">
-          <h3>2023</h3>
-          </p>
-          <ul>
-            <li>
-              Alberto Catalano, Francesco Mattiotti, Jérôme Dubail, David Hagenmüller, Fabio Franchini, and Guido
-              Pupillo, "Anomalous diffusion in the Long-Range Haken-Strobl-Reineker model", <a form
-                style="display:inline" href="https://doi.org/10.1103/PhysRevLett.131.053401">Physical Review Letters
-                131, 053401 (2023)</a>.
-              <a href="./papers/PhysRevLett.131.053401-withSM.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-            <li>
-              Nick Sauerwein, Francesca Orsi, Philipp Uhrich, Soumik Bandyopadhyay, Francesco Mattiotti, Tigrane
-              Cantat-Moltrecht, Guido Pupillo, Philipp Hauke, and Jean-Philippe Brantut, "Engineering random spin models
-              with atoms in a high-finesse cavity", <a form style="display:inline"
-                href="https://www.nature.com/articles/s41567-023-02033-3">Nature Physics 19, 1128-1134 (2023)</a>.
-              <a href="./papers/s41567-023-02033-3-withSM.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-            <li>
-              Sushrut Ghonge, David Engel, Francesco Mattiotti, G. Luca Celardo, Masaru Kuno, and Boldizsár Jankó,
-              "Enhanced robustness and dimensional crossover of superradiance in cuboidal nanocrystal superlattices", <a
-                form style="display:inline" href="https://doi.org/10.1103/PhysRevResearch.5.023068">Physical Review
-                Research 5, 023068 (2023)</a>.
-              <a href="./papers/PhysRevResearch.5.023068-withSM.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-          </ul>
+                <div class="slideshow-slide">
+                  <img src="figures/universal.svg" data-translate-alt="alt-2024-4" alt="Universal stability of coherently diffusive one-dimensional systems" />
+                  <div class="slideshow-caption">
+                    Fabricio S. Lozano-Negro, Emilio Alvarez Navarro, Nahum C. Chávez, Francesco Mattiotti, Fausto Borgonovi, Horacio M. Pastawski, G. Luca Celardo<br>
+                    <strong>Universal stability of coherently diffusive one-dimensional systems with respect to decoherence</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1103/PhysRevA.109.042213">Physical Review A 109, 042213 (2024)</a>
+                      <a href="./papers/PhysRevA.109.042213.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-          <p class="lead">
-          <h3>2022</h3>
-          </p>
-          <ul>
-            <li>
-              Francesco Mattiotti, Mohan Sarovar, Giulio G. Giusteri, Fausto Borgonovi, and G. Luca Celardo, "Efficient
-              light harvesting and photon sensing via engineered cooperative effects", <a form style="display:inline"
-                href="https://doi.org/10.1088/1367-2630/ac4127">New Journal of Physics 24, 013027 (2022)</a>.
-              <a href="./papers/Mattiotti_2022_New_J._Phys._24_013027.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-          </ul>
+                <div class="slideshow-slide">
+                  <img src="figures/mobilityedge.svg" data-translate-alt="alt-2024-5" alt="Localization of light in three dimensions" />
+                  <div class="slideshow-caption">
+                    Giuseppe Luca Celardo, Mattia Angeli, Francesco Mattiotti, Robin Kaiser<br>
+                    <strong>Localization of light in three dimensions: a mobility edge in the imaginary axis in non-Hermitian Hamiltonians</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1209/0295-5075/ad222c">Europhysics Letters 145, 35002 (2024)</a>
+                      <a href="./papers/Celardo_2024_EPL_145_35002-withSM.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-          <p class="lead">
-          <h3>2021</h3>
-          </p>
-          <ul>
-            <li>
-              Francesco Mattiotti, William M. Brown, Nicola Piovella, Stefano Olivares, Erik M. Gauger, G. Luca Celardo,
-              "Bio-inspired natural sunlight-pumped lasers", <a form style="display:inline"
-                href="https://doi.org/10.1088/1367-2630/ac2852">New Journal of Physics 23, 103015 (2021)</a>.
-              <a href="./papers/Mattiotti_2021_New_J._Phys._23_103015-withSM.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-            <li>
-              Nahum C. Chavez, Francesco Mattiotti, JA Mendez-Bermudez, Fausto Borgonovi, and G Luca Celardo,
-              "Disorder-Enhanced and Disorder-Independent Transport with long-range hopping: application to molecular
-              chains in optical cavities", <a form style="display:inline"
-                href="https://doi.org/10.1103/PhysRevLett.126.153201">Physical Review Letters 126, 153201 (2021)</a>.
-              <a href="./papers/PhysRevLett.126.153201-withSM.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-          </ul>
+                <!-- 2023 -->
+                <div class="slideshow-slide">
+                  <img src="figures/dephasing.svg" data-translate-alt="alt-2023-1" alt="Anomalous diffusion in the Long-Range Haken-Strobl-Reineker model" />
+                  <div class="slideshow-caption">
+                    Alberto Catalano, Francesco Mattiotti, Jérôme Dubail, David Hagenmüller, Fabio Franchini, Guido Pupillo<br>
+                    <strong>Anomalous diffusion in the Long-Range Haken-Strobl-Reineker model</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1103/PhysRevLett.131.053401">Physical Review Letters 131, 053401 (2023)</a>
+                      <a href="./papers/PhysRevLett.131.053401-withSM.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-          <p class="lead">
-          <h3>2020</h3>
-          </p>
-          <ul>
-            <li>
-              Francesco Mattiotti, Masaru Kuno, Fausto Borgonovi, Boldizs&aacute;r Jank&oacute;, G. Luca Celardo,
-              "Thermal decoherence of superradiance in lead halide perovskite nanocrystal superlattices", <a form
-                style="display:inline" href="https://pubs.acs.org/doi/10.1021/acs.nanolett.0c02784">Nano Letters 20,
-                7382 (2020)</a>.
-              <a href="./papers/nanolett2020-accepted.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-          </ul>
+                <div class="slideshow-slide">
+                  <img src="figures/cqed.png" data-translate-alt="alt-2023-2" alt="Engineering random spin models with atoms in a high-finesse cavity" />
+                  <div class="slideshow-caption">
+                    Nick Sauerwein, Francesca Orsi, Philipp Uhrich, Soumik Bandyopadhyay, Francesco Mattiotti, Tigrane Cantat-Moltrecht, Guido Pupillo, Philipp Hauke, Jean-Philippe Brantut<br>
+                    <strong>Engineering random spin models with atoms in a high-finesse cavity</strong><br>
+                    <div class="reference-line">
+                      <a href="https://www.nature.com/articles/s41567-023-02033-3">Nature Physics 19, 1128-1134 (2023)</a>
+                      <a href="./papers/s41567-023-02033-3-withSM.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-          <p class="lead">
-          <h3>2019</h3>
-          </p>
-          <ul>
-            <li>
-              Nahum C. Chavez, Francesco Mattiotti, JA Mendez-Bermudez, Fausto Borgonovi, and G Luca Celardo, "Real and
-              imaginary energy gaps: a comparison between single excitation superradiance and superconductivity", <a
-                form style="display:inline" href="https://doi.org/10.1140/epjb/e2019-100016-3">The European Physical
-                Journal B 92, 144 (2019)</a>.
-              <a href="./papers/Ch-vez_et_al-2019-The_European_Physical_Journal_B.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-            <li>
-              Marco Gull&igrave;, Alessia Valzelli, Francesco Mattiotti, Mattia Angeli, Fausto Borgonovi, and Giuseppe
-              Luca Celardo, "Macroscopic coherence as an emergent property in molecular nanotubes", <a form
-                style="display:inline" href="https://iopscience.iop.org/article/10.1088/1367-2630/aaf01a">New Journal of
-                Physics 21, 013019 (2019)</a>.
-              <a href="./papers/Gullì_2019_New_J._Phys._21_013019.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-          </ul>
+                <div class="slideshow-slide">
+                  <img src="figures/cuboidal.svg" data-translate-alt="alt-2023-3" alt="Enhanced robustness and dimensional crossover of superradiance" />
+                  <div class="slideshow-caption">
+                    Sushrut Ghonge, David Engel, Francesco Mattiotti, G. Luca Celardo, Masaru Kuno, Boldizsár Jankó<br>
+                    <strong>Enhanced robustness and dimensional crossover of superradiance in cuboidal nanocrystal superlattices</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1103/PhysRevResearch.5.023068">Physical Review Research 5, 023068 (2023)</a>
+                      <a href="./papers/PhysRevResearch.5.023068-withSM.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-          <p class="lead">
-          <h3>2017</h3>
-          </p>
-          <ul>
-            <li>
-              Fausto Borgonovi, Francesco Mattiotti, and Felix M. Izrailev, "Temperature of a single chaotic
-              eigenstate", <a form style="display:inline"
-                href="https://journals.aps.org/pre/abstract/10.1103/PhysRevE.95.042135">Physical Review E 95, 042135
-                (2017)</a>.
-              <a href="./papers/PhysRevE.95.042135.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-          </ul>
+                <!-- 2022 -->
+                <div class="slideshow-slide">
+                  <img src="figures/sensor.png" data-translate-alt="alt-2022-1" alt="Efficient light harvesting and photon sensing via engineered cooperative effects" />
+                  <div class="slideshow-caption">
+                    Francesco Mattiotti, Mohan Sarovar, Giulio G. Giusteri, Fausto Borgonovi, G. Luca Celardo<br>
+                    <strong>Efficient light harvesting and photon sensing via engineered cooperative effects</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1088/1367-2630/ac4127">New Journal of Physics 24, 013027 (2022)</a>
+                      <a href="./papers/Mattiotti_2022_New_J._Phys._24_013027.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-          <p class="lead">
-          <h3>2015</h3>
-          </p>
-          <ul>
-            <li>
-              Giulio G. Giusteri, Francesco Mattiotti, and G. Luca Celardo, "Non-hermitian hamiltonian approach to
-              quantum transport in disordered networks with sinks: Validity and effectiveness", <a form
-                style="display:inline" href="https://journals.aps.org/prb/abstract/10.1103/PhysRevB.91.094301">Physical
-                Review B 91, 094301 (2015)</a>.
-              <a href="./papers/PhysRevB.91.094301.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-          </ul>
+                <!-- 2021 -->
+                <div class="slideshow-slide">
+                  <img src="figures/laser.svg" data-translate-alt="alt-2021-1" alt="Bio-inspired natural sunlight-pumped lasers" />
+                  <div class="slideshow-caption">
+                    Francesco Mattiotti, William M. Brown, Nicola Piovella, Stefano Olivares, Erik M. Gauger, G. Luca Celardo<br>
+                    <strong>Bio-inspired natural sunlight-pumped lasers</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1088/1367-2630/ac2852">New Journal of Physics 23, 103015 (2021)</a>
+                      <a href="./papers/Mattiotti_2021_New_J._Phys._23_103015-withSM.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-          <p class="lead">
-          <h3>2014</h3>
-          </p>
-          <ul>
-            <li>
-              G. L. Celardo, A. Biella, G. G. Giusteri, F. Mattiotti, Y. Zhang, and L. Kaplan, "Superradiance, disorder,
-              and the non-hermitian hamiltonian in open quantum systems", <a form style="display:inline"
-                href="https://aip.scitation.org/doi/abs/10.1063/1.4899219">AIP Conference Proceedings 1619, 64
-                (2014)</a>.
-              <a href="./papers/ProceedingsLev.pdf" class="btn btn-default btn-lg"><i
-                  class="fa fa-file-pdf-o fa-fw"></i><span class="network-name">Download</span></a>
-            </li>
-          </ul>
+                <div class="slideshow-slide">
+                  <img src="figures/long-cavity6.svg" data-translate-alt="alt-2021-2" alt="Disorder-Enhanced and Disorder-Independent Transport with long-range hopping" />
+                  <div class="slideshow-caption">
+                    Nahum C. Chavez, Francesco Mattiotti, JA Mendez-Bermudez, Fausto Borgonovi, G. Luca Celardo<br>
+                    <strong>Disorder-Enhanced and Disorder-Independent Transport with long-range hopping: application to molecular chains in optical cavities</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1103/PhysRevLett.126.153201">Physical Review Letters 126, 153201 (2021)</a>
+                      <a href="./papers/PhysRevLett.126.153201-withSM.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-        </div>
-        <div class="col-lg-5 mr-auto ">
-          <br>
-          <a href="https://arxiv.org/abs/2601.20560"><img class="img-fluid" src="figures/resetting.svg"
-              alt="Time complexity of a monitored quantum search with resetting"></a>
-          <br>
-          <a href="https://doi.org/10.1103/PhysRevB.111.L020503"><img class="img-fluid"
-              src="figures/phasetransition.svg"
-              alt="Scale-invariant phase transition of disordered bosons in one dimension"></a>
-          <br>
-          <a href="https://doi.org/10.1021/jacs.4c03016"><img class="img-fluid" src="figures/jacs-cover.jpg"
-              alt="Extraordinary electrical conductance through amorphous non-conducting polymers under vibrational strong coupling"></a>
-          <br>
-          <a href="https://doi.org/10.1088/1367-2630/ac4127"><img class="img-fluid" src="figures/sensor.png"
-              alt="Efficient light harvesting and photon sensing via engineered cooperative effects"></a>
-          <br>
-          <a href="https://doi.org/10.1088/1367-2630/ac2852"><img class="img-fluid" src="figures/laser.svg"
-              alt="Bio-inspired natural sunlight-pumped lasers"></a>
-          <br>
-          <a href="https://doi.org/10.1103/PhysRevLett.126.153201"><img class="img-fluid" src="figures/long-cavity6.svg"
-              alt="Disorder-Enhanced and Disorder-Independent Transport with long-range hopping"></a>
-          <br>
-          <a href="https://pubs.acs.org/doi/10.1021/acs.nanolett.0c02784"><img class="img-fluid center-block"
-              src="./figures/movie.gif" alt="Superfluorescence in superlattices"></a>
-          <br>
-          <a href="https://doi.org/10.1140/epjb/e2019-100016-3"><img class="img-fluid center-block"
-              src="./figures/gap.png" alt="Comparing Superradiance and Superconductivity"></a>
-          <br>
-          <a href="https://iopscience.iop.org/article/10.1088/1367-2630/aaf01a/pdf"><img class="img-fluid"
-              src="figures/macroscopic.png" alt="Macroscopic coherence in molecular nanotubes"></a>
-          <br>
-          <a href="https://journals.aps.org/pre/abstract/10.1103/PhysRevE.95.042135"><img class="img-fluid center-block"
-              src="./figures/temperature.png" alt="Quantum chaos"></a>
-          <br>
-          <a href="https://journals.aps.org/prb/abstract/10.1103/PhysRevB.91.094301"><img class="img-fluid center-block"
-              src="./figures/nonhermitian.png" alt="Non-Hermitian Hamiltonian approach to quantum transport"></a>
-          <!-- <a href="https://aip.scitation.org/doi/abs/10.1063/1.4899219"><img class="img-fluid center-block" src="./figures/superradiance.png" alt="Interplay of superradiance and disorder"></a> -->
-        </div>
-      </div>
+                <!-- 2020 -->
+                <div class="slideshow-slide">
+                  <img src="figures/movie.gif" data-translate-alt="alt-2020-1" alt="Thermal decoherence of superradiance in lead halide perovskite nanocrystal superlattices" />
+                  <div class="slideshow-caption">
+                    Francesco Mattiotti, Masaru Kuno, Fausto Borgonovi, Boldizsár Jankó, G. Luca Celardo<br>
+                    <strong>Thermal decoherence of superradiance in lead halide perovskite nanocrystal superlattices</strong><br>
+                    <div class="reference-line">
+                      <a href="https://pubs.acs.org/doi/10.1021/acs.nanolett.0c02784">Nano Letters 20, 7382 (2020)</a>
+                      <a href="./papers/nanolett2020-accepted.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-    </div>
-    <!-- /.container -->
+                <!-- 2019 -->
+                <div class="slideshow-slide">
+                  <img src="figures/gap.png" data-translate-alt="alt-2019-1" alt="Real and imaginary energy gaps: a comparison between single excitation superradiance and superconductivity" />
+                  <div class="slideshow-caption">
+                    Nahum C. Chavez, Francesco Mattiotti, JA Mendez-Bermudez, Fausto Borgonovi, G. Luca Celardo<br>
+                    <strong>Real and imaginary energy gaps: a comparison between single excitation superradiance and superconductivity</strong><br>
+                    <div class="reference-line">
+                      <a href="https://doi.org/10.1140/epjb/e2019-100016-3">The European Physical Journal B 92, 144 (2019)</a>
+                      <a href="./papers/Ch-vez_et_al-2019-The_European_Physical_Journal_B.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-  </section>
-  <!-- /.content-section-b -->
+                <div class="slideshow-slide">
+                  <img src="figures/macroscopic.png" data-translate-alt="alt-2019-2" alt="Macroscopic coherence as an emergent property in molecular nanotubes" />
+                  <div class="slideshow-caption">
+                    Marco Gullì, Alessia Valzelli, Francesco Mattiotti, Mattia Angeli, Fausto Borgonovi, Giuseppe Luca Celardo<br>
+                    <strong>Macroscopic coherence as an emergent property in molecular nanotubes</strong><br>
+                    <div class="reference-line">
+                      <a href="https://iopscience.iop.org/article/10.1088/1367-2630/aaf01a">New Journal of Physics 21, 013019 (2019)</a>
+                      <a href="./papers/Gullì_2019_New_J._Phys._21_013019.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-  <!-- CONTACT INFORMATION -->
-  <a name="contact"></a>
-  <section class="content-section-b">
+                <!-- 2017 -->
+                <div class="slideshow-slide">
+                  <img src="figures/temperature.png" data-translate-alt="alt-2017-1" alt="Temperature of a single chaotic eigenstate" />
+                  <div class="slideshow-caption">
+                    Fausto Borgonovi, Francesco Mattiotti, Felix M. Izrailev<br>
+                    <strong>Temperature of a single chaotic eigenstate</strong><br>
+                    <div class="reference-line">
+                      <a href="https://journals.aps.org/pre/abstract/10.1103/PhysRevE.95.042135">Physical Review E 95, 042135 (2017)</a>
+                      <a href="./papers/PhysRevE.95.042135.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-    <div class="container">
+                <!-- 2015 -->
+                <div class="slideshow-slide">
+                  <img src="figures/nonhermitian.png" data-translate-alt="alt-2015-1" alt="Non-Hermitian Hamiltonian approach to quantum transport in disordered networks with sinks" />
+                  <div class="slideshow-caption">
+                    Giulio G. Giusteri, Francesco Mattiotti, G. Luca Celardo<br>
+                    <strong>Non-hermitian hamiltonian approach to quantum transport in disordered networks with sinks: Validity and effectiveness</strong><br>
+                    <div class="reference-line">
+                      <a href="https://journals.aps.org/prb/abstract/10.1103/PhysRevB.91.094301">Physical Review B 91, 094301 (2015)</a>
+                      <a href="./papers/PhysRevB.91.094301.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
 
-      <div class="row">
-        <div class="col-lg-5 ml-auto order-lg-2">
-          <hr class="section-heading-spacer">
-          <div class="clearfix"></div>
-          <h2 class="section-heading">Contact</h2>
-          <table>
-            <tr>
-              <td valign=top><b>Address</b>:
-              <td>
-                Universität des Saarlandes<br>
-                Campus E2 6<br>
-                66123 Saarbrücken, Germany<br>
-            <tr>
-              <td valign=top><b>Room</b>:
-              <td>
-                4.21<br>
-            <tr>
-              <td valign=top><b>Phone</b>:
-              <td>
-                <a href="tel:+496813023777">+49 (0) 681 302 3777</a><br>
-            <tr>
-              <td valign=top><b>E-mail</b>:
-              <td>
-                <a href="mailto:francesco.mattiotti@uni-saarland.de">francesco.mattiotti@uni-saarland.de</a><br>
-          </table>
+                <!-- 2014 -->
+                <div class="slideshow-slide">
+                  <img src="figures/superradiance.png" data-translate-alt="alt-2014-1" alt="Superradiance, disorder, and the non-hermitian hamiltonian in open quantum systems" />
+                  <div class="slideshow-caption">
+                    G. L. Celardo, A. Biella, G. G. Giusteri, F. Mattiotti, Y. Zhang, L. Kaplan<br>
+                    <strong>Superradiance, disorder, and the non-hermitian hamiltonian in open quantum systems</strong><br>
+                    <div class="reference-line">
+                      <a href="https://aip.scitation.org/doi/abs/10.1063/1.4899219">AIP Conference Proceedings 1619, 64 (2014)</a>
+                      <a href="./papers/ProceedingsLev.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-        </div>
-        <div class="col-lg-5 mr-auto order-lg-1">
-          <img class="img-fluid" src="figures/toscolano.jpg">
+              <!-- Arrows -->
+              <button class="slideshow-arrow prev" id="prevBtn">&#10094;</button>
+              <button class="slideshow-arrow next" id="nextBtn">&#10095;</button>
+
+              <!-- Play/Pause Button -->
+              <button class="slideshow-play-pause" id="playPauseBtn">
+                <i class="fa fa-play"></i>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
+    </section>
 
-    </div>
-    <!-- /.container -->
-
-  </section>
-  <!-- /.content-section-b -->
-
-
-  <!-- Contatti-->
-
-  <aside class="banner">
-
-    <div class="container">
-
-      <div class="row">
-        <div class="col-lg-6 my-auto">
-          <h2>Get in touch</h2>
-        </div>
-        <div class="col-lg-6 my-auto">
-          <ul class="list-inline banner-social-buttons">
-            <li class="list-inline-item">
-              <a href="mailto:francesco.mattiotti@uni-saarland.de" class="btn btn-default btn-lg">
-                <i class="fa fa-envelope fa-fw"></i>
-                <span class="network-name">Work</span>
-              </a>
-            </li>
-            <li class="list-inline-item">
-              <a href="mailto:mattiottifrancesco@gmail.com" class="btn btn-default btn-lg">
-                <i class="fa fa-envelope fa-fw"></i>
-                <span class="network-name">Personal</span>
-              </a>
-            </li>
-            <li class="list-inline-item">
-              <a href="skype:francesco.mattiotti" class="btn btn-default btn-lg">
-                <i class="fa fa-skype fa-fw"></i>
-                <span class="network-name">Skype</span>
-              </a>
-            </li>
-          </ul>
+    <!-- Contact -->
+    <a name="contact"></a>
+    <section class="content-section-a">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-5 ml-auto order-lg-2">
+            <hr class="section-heading-spacer">
+            <div class="clearfix"></div>
+            <h2 class="section-heading" data-translate="contact-title">Contact</h2>
+            <table>
+              <tr>
+                <td valign="top"><b data-translate="contact-address">Address:</b></td>
+                <td>Universität des Saarlandes<br>Campus E2 6<br>66123 Saarbrücken, Germany</td>
+              </tr>
+              <tr>
+                <td valign="top"><b data-translate="contact-room">Room:</b></td>
+                <td>4.21</td>
+              </tr>
+              <tr>
+                <td valign="top"><b data-translate="contact-phone">Phone:</b></td>
+                <td><a href="tel:+496813023777">+49 (0) 681 302 3777</a></td>
+              </tr>
+              <tr>
+                <td valign="top"><b data-translate="contact-email">E-mail:</b></td>
+                <td><a href="mailto:francesco.mattiotti@uni-saarland.de">francesco.mattiotti@uni-saarland.de</a></td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-lg-5 mr-auto order-lg-1">
+            <img class="img-fluid" src="figures/toscolano.jpg">
+          </div>
         </div>
       </div>
+    </section>
 
-    </div>
-    <!-- /.container -->
+    <!-- Get in Touch -->
+    <aside class="banner">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-6 my-auto">
+            <h2 data-translate="get-in-touch-title">Get in touch</h2>
+          </div>
+          <div class="col-lg-6 my-auto">
+            <ul class="list-inline banner-social-buttons">
+              <li class="list-inline-item">
+                <a href="mailto:francesco.mattiotti@uni-saarland.de" class="btn btn-default btn-lg">
+                  <i class="fa fa-envelope fa-fw"></i>
+                  <span class="network-name" data-translate="get-in-touch-work">Work</span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="mailto:mattiottifrancesco@gmail.com" class="btn btn-default btn-lg">
+                  <i class="fa fa-envelope fa-fw"></i>
+                  <span class="network-name" data-translate="get-in-touch-personal">Personal</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </aside>
 
-  </aside>
-  <!-- /.banner -->
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <ul class="list-inline">
+          <li class="list-inline-item">
+            <a href="#" data-translate="footer-home">Home</a>
+          </li>
+          <li class="footer-menu-divider list-inline-item">&sdot;</li>
+          <li class="list-inline-item">
+            <a href="#about" data-translate="footer-about">About Me</a>
+          </li>
+          <li class="footer-menu-divider list-inline-item">&sdot;</li>
+          <li class="list-inline-item">
+            <a href="#research" data-translate="footer-research">Research</a>
+          </li>
+          <li class="footer-menu-divider list-inline-item">&sdot;</li>
+          <li class="list-inline-item">
+            <a href="#contact" data-translate="footer-contact">Contact</a>
+          </li>
+        </ul>
+        <p class="copyright text-muted small" data-translate="footer-copyright">
+          Thanks to <a href="https://github.com/MasterToninus/MasterToninus.github.io">Antonio M. Miti</a> for the custom theme.
+          <br>
+          Thanks to <a href="https://github.com/BlackrockDigital/startbootstrap-landing-page">BlackrockDigital</a> for the original theme.
+          <br>
+          Title background, contact and banner photos &copy; 2017-2019 Francesco Mattiotti. Portrait photo &copy; 2023 Swayangdipta Bera. All rights reserved.
+        </p>
+      </div>
+    </footer>
 
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <ul class="list-inline">
-        <li class="list-inline-item">
-          <a href="#">Home</a>
-        </li>
-        <li class="footer-menu-divider list-inline-item">&sdot;</li>
-        <li class="list-inline-item">
-          <a href="#about">About</a>
-        </li>
-        <li class="footer-menu-divider list-inline-item">&sdot;</li>
-        <li class="list-inline-item">
-          <a href="#research">Research Interests</a>
-        </li>
-        <li class="footer-menu-divider list-inline-item">&sdot;</li>
-        <li class="list-inline-item">
-          <a href="#publications">Publications</a>
-        </li>
-        <li class="footer-menu-divider list-inline-item">&sdot;</li>
-        <li class="list-inline-item">
-          <a href="#contact">Contact</a>
-        </li>
-      </ul>
-      <p class="copyright text-muted small">
-        Credits to <a href="https://github.com/MasterToninus/MasterToninus.github.io">Antonio M. Miti</a> for the custom
-        template.
-        <br>
-        Credits to <a href="https://github.com/BlackrockDigital/startbootstrap-landing-page">BlackrockDigital</a> for
-        the bootstrap template.
-        <br>
-        Title background, contact and banner photos © 2017-2019 Francesco Mattiotti. Portrait photo © 2023 Swayangdipta
-        Bera. All rights reserved.
-      </p>
-    </div>
-  </footer>
-
-  <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
+    <!-- Bootstrap core JavaScript -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
