@@ -150,6 +150,13 @@
     .slideshow-caption strong {
       font-weight: bold;
     }
+    .slideshow-slides {
+      cursor: grab;
+      user-select: none;
+    }
+    .slideshow-slides:active {
+      cursor: grabbing;
+    }
   </style>
 
   <script>
@@ -570,7 +577,7 @@
       });
     }
 
-    // ===== SLIDESHOW LOGIC =====
+// ===== SLIDESHOW LOGIC (with drag support) =====
     function initSlideshow() {
       const slides = document.getElementById('slides');
       const slideItems = document.querySelectorAll('.slideshow-slide');
@@ -583,8 +590,15 @@
       let autoPlayInterval;
       let isPlaying = false;
 
+      // Drag support variables
+      let isDragging = false;
+      let startX = 0;
+      let currentX = 0;
+      let startTranslate = 0;
+
       function updateSlidePosition() {
         slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+        slides.style.transition = 'transform 0.3s ease';
       }
 
       function nextSlide() {
@@ -597,9 +611,69 @@
         updateSlidePosition();
       }
 
+      // --- Drag functions ---
+      function startDrag(e) {
+        if (e.type === 'mousedown' && e.button !== 0) return; // Only left mouse button
+        isDragging = true;
+        startX = getClientX(e);
+        startTranslate = currentIndex;
+        slides.style.transition = 'none';
+        slides.style.cursor = 'grabbing';
+        e.preventDefault();
+      }
+
+      function drag(e) {
+        if (!isDragging) return;
+        currentX = getClientX(e);
+        const deltaX = currentX - startX;
+        const offset = startTranslate * 100 - deltaX / window.innerWidth * 100;
+        slides.style.transform = `translateX(-${offset}%)`;
+        e.preventDefault();
+      }
+
+      function endDrag(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        slides.style.cursor = 'grab';
+        slides.style.transition = 'transform 0.3s ease';
+
+        const deltaX = currentX - startX;
+        const threshold = 50; // Minimum pixels to trigger slide change
+
+        if (Math.abs(deltaX) > threshold) {
+          if (deltaX > 0) {
+            prevSlide();
+          } else {
+            nextSlide();
+          }
+        } else {
+          // Return to the original position if drag was too small
+          updateSlidePosition();
+        }
+        e.preventDefault();
+      }
+
+      function getClientX(e) {
+        return e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+      }
+
+      // --- Event Listeners ---
+      // Mouse events
+      slides.addEventListener('mousedown', startDrag);
+      slides.addEventListener('mousemove', drag);
+      slides.addEventListener('mouseup', endDrag);
+      slides.addEventListener('mouseleave', endDrag);
+
+      // Touch events
+      slides.addEventListener('touchstart', startDrag, { passive: false });
+      slides.addEventListener('touchmove', drag, { passive: false });
+      slides.addEventListener('touchend', endDrag);
+
+      // Button events
       nextBtn.addEventListener('click', nextSlide);
       prevBtn.addEventListener('click', prevSlide);
 
+      // Play/Pause logic
       function toggleAutoPlay() {
         if (isPlaying) {
           clearInterval(autoPlayInterval);
@@ -820,7 +894,7 @@
                     Alessia Valzelli, <u>Francesco Mattiotti</u>, Jianshu Cao, Giuseppe Luca Celardo<br>
                     <strong>Relation between structure and functionality in photosynthetic antenna complex of green sulfur bacteria: efficiency under natural sunlight pumping</strong><br>
                     <div class="reference-line">
-                      <a href="https://doi.org/10.1021/acs.jpcb.6c00303">The Journal of Physical Chemistry B (2026)</a>
+                      <a href="https://doi.org/10.1021/acs.jpcb.6c00303">The Journal of Physical Chemistry B 130, 5260 (2026)</a>
                       <a href="./papers/2510.19453v1.pdf" class="download-btn"><i class="fa fa-file-pdf-o fa-fw"></i><span data-translate="publications-download">Download</span></a>
                     </div>
                   </div>
